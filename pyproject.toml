@@ -1,0 +1,107 @@
+[build-system]
+requires = ["poetry-core>=2.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
+
+# ---------------------------------------------------------------------------- #
+# Project Metadata (PEP 621 Standard)
+# ---------------------------------------------------------------------------- #
+[project]
+name = "legendary_engine"
+dynamic = ["version"]  # version is calculated dynamically
+description = ""
+authors = [
+    {name = "Farai Wande", email = "faraiwande@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12,<3.13" # equivalent to ~3.12
+
+# Main Dependencies (Standard PEP 508 Format)
+dependencies = [
+    "delta-spark==4.0.0",
+    "numpy==2.1.3",
+    "pandas==2.2.3",
+    "pyarrow==19.0.1",
+    "pyspark==4.0.0",
+    "bump (>=1.3.2,<2.0.0)",
+    "grpcio (>=1.76.0,<2.0.0)",
+    "grpcio-status (>=1.76.0,<2.0.0)",
+    "requests (>=2.32.5,<3.0.0)",
+    "types-requests (>=2.32.4.20250913,<3.0.0.0)"
+]
+
+# ---------------------------------------------------------------------------- #
+# Poetry Build Configuration
+# ---------------------------------------------------------------------------- #
+[tool.poetry]
+packages = [
+    {include = "legendary_engine"}
+]
+
+# ---------------------------------------------------------------------------- #
+# Dev/Test/Lint Dependencies (Poetry Groups)
+# ---------------------------------------------------------------------------- #
+version = "0.2.0"
+
+[tool.poetry.group.test.dependencies]
+pytest = "8.3.4"
+pytest-cov = "6.0.0"
+pytest-env = "1.1.5"
+
+[tool.poetry.group.lint.dependencies]
+commitizen = "4.1.0"
+mypy = "1.14.1"
+pandas-stubs = "2.2.3.241126"
+ruff = "0.9.1"
+
+# ---------------------------------------------------------------------------- #
+# Dynamic Versioning
+# ---------------------------------------------------------------------------- #
+[tool.poetry-dynamic-versioning]
+enable = true
+vcs = "git"
+style = "pep440"
+
+# ---------------------------------------------------------------------------- #
+# Ruff Configuration
+# ---------------------------------------------------------------------------- #
+[tool.ruff]
+exclude = ["scripts", "*.ipynb", "databricks", "*.toml"]
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = ["A", "ARG", "B", "D", "E", "ERA", "F", "I", "PT", "PTH", "RET", "S", "SIM", "T20", "TD", "UP"]
+ignore = ["D100", "D104", "D205", "D212", "D415", "N812", "S608", "RET505"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101", "D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+# ---------------------------------------------------------------------------- #
+# Commitizen Configuration
+# ---------------------------------------------------------------------------- #
+[tool.commitizen]
+name = "cz_customize"
+tag_format = "v$version"
+version_scheme = "semver2"
+version_provider = "poetry"
+update_changelog_on_bump = true
+
+# Points to legendary_engine/__init__.py
+version_files = [
+    "legendary_engine/__init__.py:__version__",
+    "databricks/version.yml:default"
+]
+
+[tool.commitizen.customize]
+schema_pattern = "^(build|bump|docs|feat|fix|refactor|chore):(\\s.*)"
+changelog_pattern = "^(build|docs|feat|fix|refactor|chore):(\\s.*)"
+commit_parser = "^(?P<change_type>build|bump|docs|feat|fix|refactor|chore):\\s(?P<message>.*)?"
+change_type_order = ["feat", "build", "fix", "refactor", "chore", "docs"]
+bump_map = {feat = "MINOR", build = "PATCH", docs = "PATCH", fix = "PATCH", refactor = "PATCH", chore = "PATCH"}
+
